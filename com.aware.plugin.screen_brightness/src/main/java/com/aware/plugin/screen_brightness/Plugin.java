@@ -30,8 +30,10 @@ public class Plugin extends Aware_Plugin {
             @Override
             public void onContext() {
                 Intent context = new Intent();
-                context.setAction("ACTION_AWARE_PLUGIN_SCREEN_BRIGHTNESS");
-                context.putExtra("screen_brightness", "test");
+                context.setAction(ACTION_PLUGIN_SCREEN_BRIGHTNESS);
+                context.putExtra("brightness", BrightnessAnalyser.brightness);
+                context.putExtra("autoBrightness", BrightnessAnalyser.autoBrightness);
+                sendBroadcast(context);
             }
         };
 
@@ -66,7 +68,7 @@ public class Plugin extends Aware_Plugin {
             DEBUG = Aware.getSetting(this, Aware_Preferences.DEBUG_FLAG).equals("true");
 
             //Initialize our plugin's settings
-            Aware.setSetting(this, Settings.INTERVAL_PLUGIN_SCREEN_BRIGHTNESS, true);
+            Aware.setSetting(this, Settings.INTERVAL_PLUGIN_SCREEN_BRIGHTNESS, Settings.DEFAULT_INTERVAL_PLUGIN_SCREEN_BRIGHTNESS);
 
             try{
                 Scheduler.Schedule brightnessSampler = Scheduler.getSchedule(this, SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS);
@@ -95,6 +97,7 @@ public class Plugin extends Aware_Plugin {
         super.onDestroy();
 
         Aware.setSetting(this, Settings.INTERVAL_PLUGIN_SCREEN_BRIGHTNESS, false);
+        Scheduler.removeSchedule(this, SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS);
 
         //Stop AWARE's instance running inside the plugin package
         Aware.stopAWARE();

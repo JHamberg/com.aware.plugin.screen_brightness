@@ -11,7 +11,7 @@ import com.aware.Aware;
 public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     //Plugin settings in XML @xml/preferences
-    private static final Long DEFAULT_INTERVAL = 60000L;
+    public static final Long DEFAULT_INTERVAL_PLUGIN_SCREEN_BRIGHTNESS = 1L;
     public static final String INTERVAL_PLUGIN_SCREEN_BRIGHTNESS = "interval_plugin_screen_brightness";
 
     @Override
@@ -26,7 +26,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     protected void onResume() {
         super.onResume();
         if( Aware.getSetting(this, INTERVAL_PLUGIN_SCREEN_BRIGHTNESS).length() == 0 ) {
-            Aware.setSetting( this, INTERVAL_PLUGIN_SCREEN_BRIGHTNESS, DEFAULT_INTERVAL);
+            Aware.setSetting( this, INTERVAL_PLUGIN_SCREEN_BRIGHTNESS, DEFAULT_INTERVAL_PLUGIN_SCREEN_BRIGHTNESS);
         }
     }
 
@@ -34,7 +34,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference setting = findPreference(key);
         if( setting.getKey().equals(INTERVAL_PLUGIN_SCREEN_BRIGHTNESS) ) {
-            Aware.setSetting(this, key, sharedPreferences.getLong(key, DEFAULT_INTERVAL));
+            Aware.setSetting(this, key, sharedPreferences.getLong(key, DEFAULT_INTERVAL_PLUGIN_SCREEN_BRIGHTNESS));
         }
     }
 }

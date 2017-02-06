@@ -47,6 +47,8 @@ public class ContextCard implements IContextCard {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Plugin.ACTION_PLUGIN_SCREEN_BRIGHTNESS);
         context.registerReceiver(brightnessListener, filter);
+
+        updateBrightness(context);
         return card;
     }
 }

@@ -12,6 +12,9 @@ import com.aware.Aware;
  * Created by Jonatan Hamberg on 6.2.2017.
  */
 public class BrightnessAnalyser extends IntentService{
+    public static String brightness;
+    public static String autoBrightness;
+
     public BrightnessAnalyser() {
         super(Plugin.TAG);
     }
@@ -19,8 +22,10 @@ public class BrightnessAnalyser extends IntentService{
     @Override
     protected void onHandleIntent(Intent intent) {
         ContentValues data = new ContentValues();
-        data.put(Provider.Brightness_Data.BRIGHTNESS, getScreenBrightness());
-        data.put(Provider.Brightness_Data.AUTO_BRIGHTNESS, isAutoBrightness());
+        brightness = getScreenBrightness();
+        autoBrightness = isAutoBrightness();
+        data.put(Provider.Brightness_Data.BRIGHTNESS, brightness);
+        data.put(Provider.Brightness_Data.AUTO_BRIGHTNESS, autoBrightness);
         getContentResolver().insert(Provider.Brightness_Data.CONTENT_URI, data);
         if(Aware.DEBUG){
             Log.d(Plugin.TAG, data.toString());

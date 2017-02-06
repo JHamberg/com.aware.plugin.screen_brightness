@@ -17,10 +17,14 @@
             android:name="com.aware.plugin.screen_brightness.Settings"
             android:exported="true" />
 
+        <service
+            android:name="com.aware.plugin.screen_brightness.BrightnessAnalyser"
+            android:exported="true"/>
+
         <!-- Keep the ${applicationId} so there are no conflicts when merging this plugin as a library for reuse -->
         <provider
             android:name="com.aware.plugin.screen_brightness.Provider"
-            android:authorities="${applicationId}.provider.xxx"
+            android:authorities="${applicationId}.provider.screen_brightness"
             android:exported="true"
             android:readPermission="com.aware.READ_CONTEXT_DATA"
             android:writePermission="com.aware.WRITE_CONTEXT_DATA" />
