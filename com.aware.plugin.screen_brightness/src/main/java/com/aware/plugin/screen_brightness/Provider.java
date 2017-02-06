@@ -51,13 +51,12 @@ public class Provider extends ContentProvider {
      */
     public static final class TableOne_Data implements AWAREColumns {
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + DB_TBL_TEMPLATE);
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.aware.plugin.screen_brightness.provider.table_one"; //modify me
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.aware.plugin.screen_brightness.provider.table_one"; //modify me
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.aware.plugin.screen_brightness.provider.table_one";
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.aware.plugin.screen_brightness.provider.table_one";
 
         //Note: integers and strings don't need a type prefix_
-        public static final String NAME = "name";
-        public static final String BIG_NUMBER = "double_big_number"; //a double_ prefix makes a MySQL DOUBLE column
-        public static final String PICTURE = "blob_picture"; //a blob_ prefix makes a MySQL BLOB column
+        public static final String BRIGHTNESS = "brightness";
+        public static final String AUTO_BRIGHTNESS = "auto_brightness";
     }
 
     //Define each database table fields
@@ -65,9 +64,8 @@ public class Provider extends ContentProvider {
         TableOne_Data._ID + " integer primary key autoincrement," +
         TableOne_Data.TIMESTAMP + " real default 0," +
         TableOne_Data.DEVICE_ID + " text default ''," +
-        TableOne_Data.NAME + " text default ''," +
-        TableOne_Data.BIG_NUMBER + " real default 0," +
-        TableOne_Data.PICTURE + " blob default null";
+        TableOne_Data.BRIGHTNESS + " text default ''," +
+        TableOne_Data.AUTO_BRIGHTNESS + " text default ''";
 
     /**
      * Share the fields with AWARE so we can replicate the table schema on the server
@@ -112,9 +110,8 @@ public class Provider extends ContentProvider {
         tableOneHash.put(TableOne_Data._ID, TableOne_Data._ID);
         tableOneHash.put(TableOne_Data.TIMESTAMP, TableOne_Data.TIMESTAMP);
         tableOneHash.put(TableOne_Data.DEVICE_ID, TableOne_Data.DEVICE_ID);
-        tableOneHash.put(TableOne_Data.NAME, TableOne_Data.NAME);
-        tableOneHash.put(TableOne_Data.BIG_NUMBER, TableOne_Data.BIG_NUMBER);
-        tableOneHash.put(TableOne_Data.PICTURE, TableOne_Data.PICTURE);
+        tableOneHash.put(TableOne_Data.BRIGHTNESS, TableOne_Data.BRIGHTNESS);
+        tableOneHash.put(TableOne_Data.AUTO_BRIGHTNESS, TableOne_Data.AUTO_BRIGHTNESS);
 
         return true;
     }

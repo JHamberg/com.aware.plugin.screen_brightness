@@ -9,8 +9,10 @@ import com.aware.Aware;
 import com.aware.Aware_Preferences;
 import com.aware.ui.PermissionsHandler;
 import com.aware.utils.Aware_Plugin;
+import com.aware.utils.Scheduler;
 
 public class Plugin extends Aware_Plugin {
+    public static final String SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS = "SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS";
 
     @Override
     public void onCreate() {
@@ -26,7 +28,9 @@ public class Plugin extends Aware_Plugin {
         CONTEXT_PRODUCER = new ContextProducer() {
             @Override
             public void onContext() {
-                //Broadcast your context here
+                Intent context = new Intent();
+                context.setAction("ACTION_AWARE_PLUGIN_SCREEN_BRIGHTNESS");
+                context.putExtra("screen_brightness", "test");
             }
         };
 
@@ -61,8 +65,20 @@ public class Plugin extends Aware_Plugin {
             DEBUG = Aware.getSetting(this, Aware_Preferences.DEBUG_FLAG).equals("true");
 
             //Initialize our plugin's settings
-            Aware.setSetting(this, Settings.STATUS_PLUGIN_TEMPLATE, true);
+            Aware.setSetting(this, Settings.INTERVAL_PLUGIN_SCREEN_BRIGHTNESS, true);
 
+            try{
+                Scheduler.Schedule brightnessSampler = Scheduler.getSchedule(this, SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS);
+                if(brightnessSampler == null || brightnessSampler.getInterval() != Long.parseLong(Aware.getSetting(this, Settings.INTERVAL_PLUGIN_SCREEN_BRIGHTNESS))){
+                    brightnessSampler = new Scheduler.Schedule(SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS)
+                            .setInterval(Long.parseLong(Aware.getSetting(this, Settings.INTERVAL_PLUGIN_SCREEN_BRIGHTNESS)))
+                            .setActionType(Scheduler.ACTION_TYPE_SERVICE)
+                            .setActionClass(getPackageName() + "/" + BrightnessAnalyser.class.getName());
+                    Scheduler.saveSchedule(this, brightnessSampler);
+                }
+            } catch(Exception e){
+                e.printStackTrace();
+            }
         } else {
             Intent permissions = new Intent(this, PermissionsHandler.class);
             permissions.putExtra(PermissionsHandler.EXTRA_REQUIRED_PERMISSIONS, REQUIRED_PERMISSIONS);
@@ -77,7 +93,7 @@ public class Plugin extends Aware_Plugin {
     public void onDestroy() {
         super.onDestroy();
 
-        Aware.setSetting(this, Settings.STATUS_PLUGIN_TEMPLATE, false);
+        Aware.setSetting(this, Settings.INTERVAL_PLUGIN_SCREEN_BRIGHTNESS, false);
 
         //Stop AWARE's instance running inside the plugin package
         Aware.stopAWARE();
