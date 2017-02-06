@@ -21,13 +21,13 @@ import java.util.HashMap;
 
 public class Provider extends ContentProvider {
 
-    public static String AUTHORITY = "com.aware.plugin.screen_brightness.provider.xxx"; //change to package.provider.your_plugin_name
+    public static String AUTHORITY = "com.aware.plugin.screen_brightness.provider.screen_brightness"; //change to package.provider.your_plugin_name
     public static final int DATABASE_VERSION = 1; //increase this if you make changes to the database structure, i.e., rename columns, etc.
 
-    public static final String DATABASE_NAME = "plugin_template.db"; //the database filename, use plugin_xxx for plugins.
+    public static final String DATABASE_NAME = "plugin_screen_brightness.db"; //the database filename, use plugin_xxx for plugins.
 
     //Add here your database table names, as many as you need
-    public static final String DB_TBL_TEMPLATE = "table_one";
+    public static final String DB_TBL_SCREEN_BRIGHTNESS = "screen_brightness";
 
     //For each table, add two indexes: DIR and ITEM. The index needs to always increment. Next one is 3, and so on.
     private static final int TABLE_ONE_DIR = 1;
@@ -35,7 +35,7 @@ public class Provider extends ContentProvider {
 
     //Put tables names in this array so AWARE knows what you have on the database
     public static final String[] DATABASE_TABLES = {
-        DB_TBL_TEMPLATE
+            DB_TBL_SCREEN_BRIGHTNESS
     };
 
     //These are columns that we need to sync data, don't change this!
@@ -49,8 +49,8 @@ public class Provider extends ContentProvider {
      * Create one of these per database table
      * In this example, we are adding example columns
      */
-    public static final class TableOne_Data implements AWAREColumns {
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + DB_TBL_TEMPLATE);
+    public static final class Brightness_Data implements AWAREColumns {
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + DB_TBL_SCREEN_BRIGHTNESS);
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.aware.plugin.screen_brightness.provider.table_one";
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.aware.plugin.screen_brightness.provider.table_one";
 
@@ -61,11 +61,11 @@ public class Provider extends ContentProvider {
 
     //Define each database table fields
     private static final String DB_TBL_TEMPLATE_FIELDS =
-        TableOne_Data._ID + " integer primary key autoincrement," +
-        TableOne_Data.TIMESTAMP + " real default 0," +
-        TableOne_Data.DEVICE_ID + " text default ''," +
-        TableOne_Data.BRIGHTNESS + " text default ''," +
-        TableOne_Data.AUTO_BRIGHTNESS + " text default ''";
+        Brightness_Data._ID + " integer primary key autoincrement," +
+        Brightness_Data.TIMESTAMP + " real default 0," +
+        Brightness_Data.DEVICE_ID + " text default ''," +
+        Brightness_Data.BRIGHTNESS + " text default ''," +
+        Brightness_Data.AUTO_BRIGHTNESS + " text default ''";
 
     /**
      * Share the fields with AWARE so we can replicate the table schema on the server
@@ -97,7 +97,7 @@ public class Provider extends ContentProvider {
     @Override
     public boolean onCreate() {
         //This is a hack to allow providers to be reusable in any application/plugin by making the authority dynamic using the package name of the parent app
-        AUTHORITY = getContext().getPackageName() + ".provider.xxx"; //make sure xxx matches the first string in this class
+        AUTHORITY = getContext().getPackageName() + ".provider.screen_brightness"; //make sure xxx matches the first string in this class
 
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -107,11 +107,11 @@ public class Provider extends ContentProvider {
 
         //Create each table hashmap so Android knows how to insert data to the database. Put ALL table fields.
         tableOneHash = new HashMap<>();
-        tableOneHash.put(TableOne_Data._ID, TableOne_Data._ID);
-        tableOneHash.put(TableOne_Data.TIMESTAMP, TableOne_Data.TIMESTAMP);
-        tableOneHash.put(TableOne_Data.DEVICE_ID, TableOne_Data.DEVICE_ID);
-        tableOneHash.put(TableOne_Data.BRIGHTNESS, TableOne_Data.BRIGHTNESS);
-        tableOneHash.put(TableOne_Data.AUTO_BRIGHTNESS, TableOne_Data.AUTO_BRIGHTNESS);
+        tableOneHash.put(Brightness_Data._ID, Brightness_Data._ID);
+        tableOneHash.put(Brightness_Data.TIMESTAMP, Brightness_Data.TIMESTAMP);
+        tableOneHash.put(Brightness_Data.DEVICE_ID, Brightness_Data.DEVICE_ID);
+        tableOneHash.put(Brightness_Data.BRIGHTNESS, Brightness_Data.BRIGHTNESS);
+        tableOneHash.put(Brightness_Data.AUTO_BRIGHTNESS, Brightness_Data.AUTO_BRIGHTNESS);
 
         return true;
     }
@@ -157,9 +157,9 @@ public class Provider extends ContentProvider {
 
             //Add each table indexes DIR and ITEM
             case TABLE_ONE_DIR:
-                return TableOne_Data.CONTENT_TYPE;
+                return Brightness_Data.CONTENT_TYPE;
             case TABLE_ONE_ITEM:
-                return TableOne_Data.CONTENT_ITEM_TYPE;
+                return Brightness_Data.CONTENT_ITEM_TYPE;
 
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -181,9 +181,9 @@ public class Provider extends ContentProvider {
 
             //Add each table DIR case
             case TABLE_ONE_DIR:
-                _id = database.insert(DATABASE_TABLES[0], TableOne_Data.DEVICE_ID, values);
+                _id = database.insert(DATABASE_TABLES[0], Brightness_Data.DEVICE_ID, values);
                 if (_id > 0) {
-                    Uri dataUri = ContentUris.withAppendedId(TableOne_Data.CONTENT_URI, _id);
+                    Uri dataUri = ContentUris.withAppendedId(Brightness_Data.CONTENT_URI, _id);
                     getContext().getContentResolver().notifyChange(dataUri, null);
                     return dataUri;
                 }

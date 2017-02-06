@@ -12,6 +12,7 @@ import com.aware.utils.Aware_Plugin;
 import com.aware.utils.Scheduler;
 
 public class Plugin extends Aware_Plugin {
+    public static final String ACTION_PLUGIN_SCREEN_BRIGHTNESS = "ACTION_PLUGIN_SCREEN_BRIGHTNESS";
     public static final String SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS = "SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS";
 
     @Override
@@ -42,7 +43,7 @@ public class Plugin extends Aware_Plugin {
         //To sync data to the server, you'll need to set this variables from your ContentProvider
         DATABASE_TABLES = Provider.DATABASE_TABLES;
         TABLES_FIELDS = Provider.TABLES_FIELDS;
-        CONTEXT_URIS = new Uri[]{ Provider.TableOne_Data.CONTENT_URI }; //this syncs dummy TableOne_Data to server
+        CONTEXT_URIS = new Uri[]{ Provider.Brightness_Data.CONTENT_URI }; //this syncs dummy Brightness_Data to server
 
         //Activate plugin -- do this ALWAYS as the last thing (this will restart your own plugin and apply the settings)
         Aware.startPlugin(this, "com.aware.plugin.screen_brightness");

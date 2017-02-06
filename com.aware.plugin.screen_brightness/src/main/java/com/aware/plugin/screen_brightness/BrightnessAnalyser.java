@@ -4,6 +4,9 @@ import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.provider.Settings;
+import android.util.Log;
+
+import com.aware.Aware;
 
 /**
  * Created by Jonatan Hamberg on 6.2.2017.
@@ -11,6 +14,17 @@ import android.provider.Settings;
 public class BrightnessAnalyser extends IntentService{
     public BrightnessAnalyser() {
         super(Plugin.TAG);
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        ContentValues data = new ContentValues();
+        data.put(Provider.Brightness_Data.BRIGHTNESS, getScreenBrightness());
+        data.put(Provider.Brightness_Data.AUTO_BRIGHTNESS, isAutoBrightness());
+        getContentResolver().insert(Provider.Brightness_Data.CONTENT_URI, data);
+        if(Aware.DEBUG){
+            Log.d(Plugin.TAG, data.toString());
+        }
     }
 
     private String isAutoBrightness() {
@@ -31,12 +45,5 @@ public class BrightnessAnalyser extends IntentService{
             e.printStackTrace();
         }
         return "unknown";
-    }
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        ContentValues data = new ContentValues();
-        data.put(Provider.TableOne_Data.BRIGHTNESS, getScreenBrightness());
-        data.put(Provider.TableOne_Data.AUTO_BRIGHTNESS, isAutoBrightness());
     }
 }
