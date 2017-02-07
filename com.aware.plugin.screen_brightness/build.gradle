@@ -9,7 +9,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.aware.plugin.screen_brightness" //EDIT ME
+        applicationId "com.aware.plugin.screen_brightness"
         minSdkVersion 10
         targetSdkVersion 25
         versionCode version_code

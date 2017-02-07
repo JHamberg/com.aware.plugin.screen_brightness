@@ -30,8 +30,8 @@ public class Provider extends ContentProvider {
     public static final String DB_TBL_SCREEN_BRIGHTNESS = "screen_brightness";
 
     //For each table, add two indexes: DIR and ITEM. The index needs to always increment. Next one is 3, and so on.
-    private static final int TABLE_ONE_DIR = 1;
-    private static final int TABLE_ONE_ITEM = 2;
+    private static final int TABLE_SCREEN_BRIGHTNESS_DIR = 1;
+    private static final int TABLE_SCREEN_BRIGHTNESS_ITEM = 2;
 
     //Put tables names in this array so AWARE knows what you have on the database
     public static final String[] DATABASE_TABLES = {
@@ -51,8 +51,8 @@ public class Provider extends ContentProvider {
      */
     public static final class Brightness_Data implements AWAREColumns {
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + DB_TBL_SCREEN_BRIGHTNESS);
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.aware.plugin.screen_brightness.provider.table_one";
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.aware.plugin.screen_brightness.provider.table_one";
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.aware.plugin.screen_brightness";
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.aware.plugin.screen_brightness";
 
         //Note: integers and strings don't need a type prefix_
         public static final String BRIGHTNESS = "brightness";
@@ -60,7 +60,7 @@ public class Provider extends ContentProvider {
     }
 
     //Define each database table fields
-    private static final String DB_TBL_TEMPLATE_FIELDS =
+    private static final String DB_TBL_SCREEN_BRIGHTNESS_FIELDS =
         Brightness_Data._ID + " integer primary key autoincrement," +
         Brightness_Data.TIMESTAMP + " real default 0," +
         Brightness_Data.DEVICE_ID + " text default ''," +
@@ -71,14 +71,14 @@ public class Provider extends ContentProvider {
      * Share the fields with AWARE so we can replicate the table schema on the server
      */
     public static final String[] TABLES_FIELDS = {
-            DB_TBL_TEMPLATE_FIELDS
+            DB_TBL_SCREEN_BRIGHTNESS_FIELDS
     };
 
     //Helper variables for ContentProvider - don't change me
     private static UriMatcher sUriMatcher;
     private static SQLiteDatabase database;
     //For each table, create a hashmap needed for database queries
-    private static HashMap<String, String> tableOneHash;
+    private static HashMap<String, String> tableScreenBrightness;
 
     /**
      * Initialise database: create the database file, update if needed, etc. DO NOT CHANGE ME
@@ -102,16 +102,16 @@ public class Provider extends ContentProvider {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         //For each table, add indexes DIR and ITEM
-        sUriMatcher.addURI(AUTHORITY, DATABASE_TABLES[0], TABLE_ONE_DIR);
-        sUriMatcher.addURI(AUTHORITY, DATABASE_TABLES[0] + "/#", TABLE_ONE_ITEM);
+        sUriMatcher.addURI(AUTHORITY, DATABASE_TABLES[0], TABLE_SCREEN_BRIGHTNESS_DIR);
+        sUriMatcher.addURI(AUTHORITY, DATABASE_TABLES[0] + "/#", TABLE_SCREEN_BRIGHTNESS_ITEM);
 
         //Create each table hashmap so Android knows how to insert data to the database. Put ALL table fields.
-        tableOneHash = new HashMap<>();
-        tableOneHash.put(Brightness_Data._ID, Brightness_Data._ID);
-        tableOneHash.put(Brightness_Data.TIMESTAMP, Brightness_Data.TIMESTAMP);
-        tableOneHash.put(Brightness_Data.DEVICE_ID, Brightness_Data.DEVICE_ID);
-        tableOneHash.put(Brightness_Data.BRIGHTNESS, Brightness_Data.BRIGHTNESS);
-        tableOneHash.put(Brightness_Data.AUTO_BRIGHTNESS, Brightness_Data.AUTO_BRIGHTNESS);
+        tableScreenBrightness = new HashMap<>();
+        tableScreenBrightness.put(Brightness_Data._ID, Brightness_Data._ID);
+        tableScreenBrightness.put(Brightness_Data.TIMESTAMP, Brightness_Data.TIMESTAMP);
+        tableScreenBrightness.put(Brightness_Data.DEVICE_ID, Brightness_Data.DEVICE_ID);
+        tableScreenBrightness.put(Brightness_Data.BRIGHTNESS, Brightness_Data.BRIGHTNESS);
+        tableScreenBrightness.put(Brightness_Data.AUTO_BRIGHTNESS, Brightness_Data.AUTO_BRIGHTNESS);
 
         return true;
     }
@@ -128,9 +128,9 @@ public class Provider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
 
             //Add all tables' DIR entries, with the right table index
-            case TABLE_ONE_DIR:
+            case TABLE_SCREEN_BRIGHTNESS_DIR:
                 qb.setTables(DATABASE_TABLES[0]);
-                qb.setProjectionMap(tableOneHash); //the hashmap of the table
+                qb.setProjectionMap(tableScreenBrightness); //the hashmap of the table
                 break;
 
             default:
@@ -156,9 +156,9 @@ public class Provider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
 
             //Add each table indexes DIR and ITEM
-            case TABLE_ONE_DIR:
+            case TABLE_SCREEN_BRIGHTNESS_DIR:
                 return Brightness_Data.CONTENT_TYPE;
-            case TABLE_ONE_ITEM:
+            case TABLE_SCREEN_BRIGHTNESS_ITEM:
                 return Brightness_Data.CONTENT_ITEM_TYPE;
 
             default:
@@ -180,7 +180,7 @@ public class Provider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
 
             //Add each table DIR case
-            case TABLE_ONE_DIR:
+            case TABLE_SCREEN_BRIGHTNESS_DIR:
                 _id = database.insert(DATABASE_TABLES[0], Brightness_Data.DEVICE_ID, values);
                 if (_id > 0) {
                     Uri dataUri = ContentUris.withAppendedId(Brightness_Data.CONTENT_URI, _id);
@@ -205,7 +205,7 @@ public class Provider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
 
             //Add each table DIR case, increasing the index accordingly
-            case TABLE_ONE_DIR:
+            case TABLE_SCREEN_BRIGHTNESS_DIR:
                 count = database.delete(DATABASE_TABLES[0], selection, selectionArgs);
                 break;
 
@@ -227,7 +227,7 @@ public class Provider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
 
             //Add each table DIR case
-            case TABLE_ONE_DIR:
+            case TABLE_SCREEN_BRIGHTNESS_DIR:
                 count = database.update(DATABASE_TABLES[0], values, selection, selectionArgs);
                 break;
 

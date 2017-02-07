@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
@@ -14,6 +15,7 @@ import com.aware.utils.Scheduler;
 public class Plugin extends Aware_Plugin {
     public static final String ACTION_PLUGIN_SCREEN_BRIGHTNESS = "ACTION_PLUGIN_SCREEN_BRIGHTNESS";
     public static final String SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS = "SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS";
+    private static ContextProducer contextProducer;
 
     @Override
     public void onCreate() {
@@ -29,13 +31,13 @@ public class Plugin extends Aware_Plugin {
         CONTEXT_PRODUCER = new ContextProducer() {
             @Override
             public void onContext() {
-                Intent context = new Intent();
-                context.setAction(ACTION_PLUGIN_SCREEN_BRIGHTNESS);
-                context.putExtra("brightness", BrightnessAnalyser.brightness);
-                context.putExtra("autoBrightness", BrightnessAnalyser.autoBrightness);
-                sendBroadcast(context);
+                if(Aware.DEBUG) Log.d(Plugin.TAG, "Context changed, sending broadcast to UI!");
+                Intent updateUiIntent = new Intent(ACTION_PLUGIN_SCREEN_BRIGHTNESS);
+                sendBroadcast(updateUiIntent);
             }
         };
+
+        contextProducer = CONTEXT_PRODUCER;
 
         //Add permissions you need (Android M+).
         //By default, AWARE asks access to the #Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -45,16 +47,19 @@ public class Plugin extends Aware_Plugin {
         //To sync data to the server, you'll need to set this variables from your ContentProvider
         DATABASE_TABLES = Provider.DATABASE_TABLES;
         TABLES_FIELDS = Provider.TABLES_FIELDS;
-        CONTEXT_URIS = new Uri[]{ Provider.Brightness_Data.CONTENT_URI }; //this syncs dummy Brightness_Data to server
+        CONTEXT_URIS = new Uri[]{ Provider.Brightness_Data.CONTENT_URI };
 
         //Activate plugin -- do this ALWAYS as the last thing (this will restart your own plugin and apply the settings)
         Aware.startPlugin(this, "com.aware.plugin.screen_brightness");
     }
 
+    public static ContextProducer getContextProducer() {
+        return contextProducer;
+    }
+
     //This function gets called every 5 minutes by AWARE to make sure this plugin is still running.
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         boolean permissions_ok = true;
         for (String p : REQUIRED_PERMISSIONS) {
             if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) {
@@ -76,8 +81,11 @@ public class Plugin extends Aware_Plugin {
                     brightnessSampler = new Scheduler.Schedule(SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS)
                             .setInterval(Long.parseLong(Aware.getSetting(this, Settings.INTERVAL_PLUGIN_SCREEN_BRIGHTNESS)))
                             .setActionType(Scheduler.ACTION_TYPE_SERVICE)
-                            .setActionClass(getPackageName() + "/" + BrightnessAnalyser.class.getName());
+                            .setActionClass(getPackageName() + "/" + BrightnessService.class.getName());
                     Scheduler.saveSchedule(this, brightnessSampler);
+                    // Run once immediately
+                    Intent initialValues = new Intent(this, BrightnessService.class);
+                    startService(initialValues);
                 }
             } catch(Exception e){
                 e.printStackTrace();
@@ -96,7 +104,6 @@ public class Plugin extends Aware_Plugin {
     public void onDestroy() {
         super.onDestroy();
 
-        Aware.setSetting(this, Settings.INTERVAL_PLUGIN_SCREEN_BRIGHTNESS, false);
         Scheduler.removeSchedule(this, SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS);
 
         //Stop AWARE's instance running inside the plugin package
