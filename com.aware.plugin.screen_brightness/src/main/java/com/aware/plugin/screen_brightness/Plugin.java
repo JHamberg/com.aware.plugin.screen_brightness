@@ -71,12 +71,15 @@ public class Plugin extends Aware_Plugin {
         if (permissions_ok) {
             //Check if the user has toggled the debug messages
             DEBUG = Aware.getSetting(this, Aware_Preferences.DEBUG_FLAG).equals("true");
+            if(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_SCREEN_BRIGHTNESS).isEmpty()){
+                Aware.setSetting(this, Settings.FREQUENCY_PLUGIN_SCREEN_BRIGHTNESS, 4L);
+            }
 
             try{
                 Scheduler.Schedule brightnessSampler = Scheduler.getSchedule(this, SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS);
-                if(brightnessSampler == null || brightnessSampler.getInterval() != Long.parseLong(Aware.getSetting(this, Settings.FREQUENCY_SCREEN_BRIGHTNESS))){
+                if(brightnessSampler == null || brightnessSampler.getInterval() != Long.parseLong(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_SCREEN_BRIGHTNESS))){
                     brightnessSampler = new Scheduler.Schedule(SCHEDULER_PLUGIN_SCREEN_BRIGHTNESS)
-                            .setInterval(Long.parseLong(Aware.getSetting(this, Settings.FREQUENCY_SCREEN_BRIGHTNESS)))
+                            .setInterval(Long.parseLong(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_SCREEN_BRIGHTNESS)))
                             .setActionType(Scheduler.ACTION_TYPE_SERVICE)
                             .setActionClass(getPackageName() + "/" + BrightnessService.class.getName());
                     Scheduler.saveSchedule(this, brightnessSampler);
