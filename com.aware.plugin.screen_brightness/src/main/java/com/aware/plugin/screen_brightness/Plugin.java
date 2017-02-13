@@ -72,7 +72,8 @@ public class Plugin extends Aware_Plugin {
             //Check if the user has toggled the debug messages
             DEBUG = Aware.getSetting(this, Aware_Preferences.DEBUG_FLAG).equals("true");
             if(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_SCREEN_BRIGHTNESS).isEmpty()){
-                Aware.setSetting(this, Settings.FREQUENCY_PLUGIN_SCREEN_BRIGHTNESS, 4L);
+                Log.d(Plugin.TAG, "Interval not set, using default (4 min)");
+                Aware.setSetting(this, Settings.FREQUENCY_PLUGIN_SCREEN_BRIGHTNESS, Settings.DEFAULT_INTERVAL_PLUGIN_SCREEN_BRIGHTNESS);
             }
 
             try{

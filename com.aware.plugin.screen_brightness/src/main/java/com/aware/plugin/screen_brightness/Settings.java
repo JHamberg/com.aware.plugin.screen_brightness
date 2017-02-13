@@ -11,7 +11,7 @@ import com.aware.Aware;
 public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     //Plugin settings in XML @xml/preferences
-    public static final Long DEFAULT_INTERVAL_PLUGIN_SCREEN_BRIGHTNESS = 1L;
+    public static final Long DEFAULT_INTERVAL_PLUGIN_SCREEN_BRIGHTNESS = 10L;
     public static final String FREQUENCY_PLUGIN_SCREEN_BRIGHTNESS = "frequency_plugin_screen_brightness";
     public static final String STATUS_PLUGIN_SCREEN_BRIGHTNESS = "status_plugin_screen_brightness";
 
